@@ -88,7 +88,7 @@ def _fuzzy_cmp(newl, oldlines, fuzzy):
 
     return None
 
-def get_new_lines(old, new, fuzzy=0.95):
+def get_new_lines(old, new, fuzzy=0.98):
     oldlines = set(old.splitlines(keepends=True))
     newlines = new.splitlines(keepends=True)
 
@@ -103,6 +103,9 @@ def get_new_lines(old, new, fuzzy=0.95):
     with multiprocessing.Pool() as pool:
         matches = pool.starmap(_fuzzy_cmp, map(lambda x: (x, oldlines, fuzzy), tmp))
 
-    ret = [ val for val in tmp if val is not None ]
+    ret = [ val for val in matches if val is not None ]
 
-    return "".join(set(ret))
+    seen = set()
+    ret = [val for val in ret if not (val in seen or seen.add(val))]
+
+    return "".join(ret)
