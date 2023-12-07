@@ -21,6 +21,11 @@ class DtbsTestCase(TestCase):
 
     desc = "Run dtbs_check on changed files"
 
+    @classmethod
+    def _register_args(cls, parser):
+        """Register testcase cmdline args."""
+        cls.add_arg(parser, "filter", action="store", help=f"Filter to use when looking up which dtb files to check.")
+
     def _applies(self):
         files = c5.git_get_changed_files(self.commit)
         for file in files:
@@ -64,12 +69,17 @@ class DtbsTestCase(TestCase):
             vendors.append(match.group("vendor"))
 
         if len(arches) != 1:
+            print(f"{arches=}")
             raise NotImplementedError()
 
         kernel_base = b4.git_get_toplevel()
         targets = []
 
-        pat = re.compile(r"(?P<target>[\w-]+\.dtb)")
+        pattern = self.get_arg("filter")
+        if pattern is None:
+            pattern = ""
+
+        pat = re.compile(r"(?P<target>" + pattern + r"[\w-]+\.dtb)")
 
         for vendor in vendors:
             makefile = f"{kernel_base}/arch/{arches[0]}/boot/dts/{vendor}/Makefile"

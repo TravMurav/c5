@@ -24,7 +24,7 @@ class TestCase:
         if self.get_arg("skip"):
             return False
 
-        return self._applies
+        return self._applies()
 
     def _applies(self):
         return True # Never skip by default
@@ -39,7 +39,10 @@ class TestCase:
     def get_arg(self, name):
         """Get the argument value"""
         name = type(self).__name__.replace("TestCase", "").lower() + "_" + name
-        return self._cmdargs[name]
+        if name in self._cmdargs:
+            return self._cmdargs[name]
+
+        return None
 
     @classmethod
     def add_arg(cls, parser : argparse.ArgumentParser, name, action="store_true", default=False, help=None):
