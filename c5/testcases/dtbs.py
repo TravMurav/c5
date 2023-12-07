@@ -21,7 +21,7 @@ class DtbsTestCase(TestCase):
 
     desc = "Run dtbs_check on changed files"
 
-    def applies(self):
+    def _applies(self):
         files = c5.git_get_changed_files(self.commit)
         for file in files:
             if ".dts" in file:

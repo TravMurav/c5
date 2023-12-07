@@ -41,10 +41,10 @@ def git_cherry_pick(commit):
     if ecode:
         raise RuntimeError()
 
-def apply_and_test(commit):
+def apply_and_test(commit, cmdargs=None):
     testcases = []
     for testcase in c5.testcases.get_testcases():
-        case = testcase(commit)
+        case = testcase(commit, cmdargs)
         if case.applies():
             logger.debug("Preparing testcase: %s", testcase.desc)
             case.prep()
@@ -57,7 +57,7 @@ def apply_and_test(commit):
         case.run()
 
 
-def main(_):
+def main(cmdargs):
     base_commit = c5.git_find_base_commit()
     logger.debug("Base commit is '%s' %s", base_commit[:12], c5.git_get_commit_subject(base_commit))
 
@@ -70,6 +70,6 @@ def main(_):
     with git_detached_head(base_commit):
         for commit in commits:
             logger.info("Testing commit '%s' %s", commit[:12], c5.git_get_commit_subject(commit))
-            apply_and_test(commit)
+            apply_and_test(commit, cmdargs)
 
         logger.info("Done!")

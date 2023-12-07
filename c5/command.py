@@ -6,11 +6,12 @@ import logging
 import sys
 
 import c5
+import c5.test
+import c5.testcases
 
 logger = c5.logger
 
 def cmd_test(cmdargs):
-    import c5.test
     c5.test.main(cmdargs)
 
 def setup_parser():
@@ -28,8 +29,10 @@ def setup_parser():
     subparsers = parser.add_subparsers(help='sub-command help', dest='subcmd')
 
     # c5 test
-    sp_mbox = subparsers.add_parser('test', help='Run tests on the git tree')
-    sp_mbox.set_defaults(func=cmd_test)
+    sp_test = subparsers.add_parser('test', help='Run tests on the git tree')
+    sp_test.set_defaults(func=cmd_test)
+
+    c5.testcases.register_testcase_args(sp_test)
 
     return parser
 
