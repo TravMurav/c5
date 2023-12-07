@@ -37,12 +37,20 @@ class DtSchemaTestCase(TestCase):
             logger.info("%s", msg)
             raise RuntimeError()
 
+        logname = c5.linux_logfile(f"{self.commit[:4]}-dtschema{pre}")
+        with open(logname, "w") as logfile:
+            logfile.write(msg)
+            logger.debug("Build warnings saved in %s", logname)
+
         return msg
 
     def prep(self):
         """
         Pre-check all the schema files to find new errors later.
         """
+        self.pre_err = ""
+
+
         files = []
         for file in c5.git_get_changed_files(self.commit):
             if not os.path.exists(file):
@@ -52,8 +60,6 @@ class DtSchemaTestCase(TestCase):
 
         if len(files) == 0:
             return
-
-        self.pre_err = ""
 
         notified = False
 
