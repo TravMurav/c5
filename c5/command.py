@@ -30,6 +30,8 @@ def setup_parser():
 
     # c5 test
     sp_test = subparsers.add_parser('test', help='Run tests on the git tree')
+    sp_test.add_argument('-b', '--base', action='store', type=str,
+                         help='Use this commit as a base instead of asking b4')
     sp_test.set_defaults(func=cmd_test)
 
     c5.testcases.register_testcase_args(sp_test)

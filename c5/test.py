@@ -4,6 +4,7 @@
 #pylint: disable=missing-function-docstring
 #pylint: disable=missing-module-docstring
 
+import sys
 from contextlib import contextmanager
 
 import b4
@@ -58,7 +59,15 @@ def apply_and_test(commit, cmdargs=None):
 
 
 def main(cmdargs):
-    base_commit = c5.git_find_base_commit()
+    if "base" in cmdargs:
+        base_commit = cmdargs.base
+    else:
+        base_commit = c5.git_find_base_commit()
+
+    if not base_commit:
+        logger.error("Base commit not found. Checkout a b4 tracked branch or use --base <hash>.")
+        sys.exit(1)
+
     logger.debug("Base commit is '%s' %s", base_commit[:12], c5.git_get_commit_subject(base_commit))
 
     commits = git_get_commits_after(base_commit)
