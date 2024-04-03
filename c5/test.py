@@ -59,7 +59,7 @@ def apply_and_test(commit, cmdargs=None):
 
 
 def main(cmdargs):
-    if "base" in cmdargs:
+    if cmdargs.base:
         base_commit = cmdargs.base
     else:
         base_commit = c5.git_find_base_commit()
