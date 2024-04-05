@@ -63,11 +63,19 @@ def linux_temp_builddir():
 
     return tempdir
 
+def core_count():
+    """Get amount of useful cores to compile with, leaving some to the user"""
+    cnt = multiprocessing.cpu_count()
+    if cnt > 4:
+        return cnt - 2
+    else:
+        return cnt - 1
+
 # FIXME: this assumes aarch64
 def linux_make(makeargs, archenvs=["CROSS_COMPILE=aarch64-linux-gnu-", "ARCH=arm64"]):
     """Run make in the current kernel dir"""
     tempdir = linux_temp_builddir()
-    cmdargs = ["make", "-j10", f"KBUILD_OUTPUT={tempdir}"] + archenvs + makeargs
+    cmdargs = ["make", f"-j{core_count()}", f"KBUILD_OUTPUT={tempdir}"] + archenvs + makeargs
 
     return run_command(cmdargs)
 
