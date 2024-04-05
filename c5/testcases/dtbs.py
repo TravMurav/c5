@@ -68,7 +68,7 @@ class DtbsTestCase(TestCase):
             arches.append(match.group("arch"))
             vendors.append(match.group("vendor"))
 
-        if len(arches) != 1:
+        if len(set(arches)) != 1:
             print(f"{arches=}")
             raise NotImplementedError()
 
