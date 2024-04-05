@@ -104,7 +104,7 @@ class DtbsTestCase(TestCase):
 
                 targets.append(target)
 
-        return targets
+        return list(set(targets))
 
 
     def prep(self):
@@ -114,12 +114,16 @@ class DtbsTestCase(TestCase):
         targets = self.target_list()
         logger.debug("We have %d dtbs to pre-check...", len(targets))
         # they will always have warnings, save but print nothing...
-        self.pre_err = self.check_dtbs(targets, pre="pre")
+        self.pre_err =  ""
+        if len(targets) > 0:
+            self.pre_err = self.check_dtbs(targets, pre="pre")
 
     def undisable_all(self):
         changed_files = c5.git_get_changed_files(self.commit)
         for file in changed_files:
             if ".dts" not in file:
+                continue
+            if not os.path.exists(file):
                 continue
             sedargs = ["sed", "-i", "/status.*\(disabled\|reserved\)/d", file]
             ecode, _, _ = c5.run_command(sedargs)
